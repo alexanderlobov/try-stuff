@@ -24,6 +24,5 @@ int main(int argc, char *argv[])
     }
     print_env_var("PATH");
     print_env_var("TEST");
-    sleep(10);
     return 0;
 }

@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <iostream>
 
+extern char **environ;
+
 void wait_print()
 {
     pid_t child_pid = wait(nullptr);
@@ -23,6 +25,25 @@ int main()
         std::cout << "execle failed, errno=" << errno << ", "
                   << strerror(errno) << '\n';
         return EXIT_FAILURE;
+    }
+    wait_print();
+
+    if (0 == fork()) {
+        char * const argv[] = {
+            "slave", "execve without env", NULL
+        };
+        char * const envp[] = { NULL };
+
+        execve("./slave", argv, envp);
+    }
+    wait_print();
+
+    if (0 == fork()) {
+        char * const argv[] = {
+            "slave", "execve with default environ", NULL
+        };
+
+        execve("./slave", argv, environ);
     }
     wait_print();
 
