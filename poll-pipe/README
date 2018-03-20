@@ -1,1 +1,9 @@
 What will a poller return when pipe's another end closes?
+
+poller  OS     Result
+
+zmqpp   macos  EOF, EOF and error (*)
+system  macos  EOF, EOF and POLLHUP (*)
+
+
+(*) pipe is explicitly closed in child()

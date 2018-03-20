@@ -1,4 +1,6 @@
 CXXFLAGS=-std=c++11
-LDLIBS=-lzmqpp
-poller_zmq: poller_zmq.cpp
-	$(CXX) $^ -o $@ $(CXXFLAGS) $(LDLIBS)
+all: poller_zmq poller_system
+poller_zmq: poller_zmq.o
+	$(CXX) $^ -o $@ $(CXXFLAGS) -lzmqpp
+poller_system: poller_system.o
+	$(CC) $^ -o $@ $(CFLAGS)
