@@ -12,7 +12,7 @@ void child(int fd)
 {
     const char *s = "hello";
     write(fd, s, strlen(s));
-    close(fd);
+    // close(fd);
     // pause();
 }
 
@@ -30,6 +30,8 @@ void parent(int fd)
         int poll_result = poll(fds, fds_size, timeout);
         printf("poll_result is %d\n", poll_result);
 
+        int should_return = 0;
+
         if (fds[0].revents & POLLIN) {
             printf("input of fd %d: ", fds[0].fd);
             const int n = read(fd, buf, BUFSIZE - 1);
@@ -38,23 +40,21 @@ void parent(int fd)
                 printf("'%s'\n", buf);
             } else if (0 == n) {
                 puts("EOF");
-                return;
+                should_return = 1;
             }
         }
         if (fds[0].revents & POLLHUP) {
             printf("POLLHUP on fd %d\n", fd);
+            should_return = 1;
         }
+
+        if (should_return)
+            return;
     }
 }
 
 int main()
 {
-    // create a pipe
-    // spawn a child
-    // 1. exit from child. Is there EOF of error condition on the pipe?
-    // 2. kill the child. The same questions.
-    // 3. try with zmqpp and system pollers.
-
     int fd[2];
     pipe(fd);
 

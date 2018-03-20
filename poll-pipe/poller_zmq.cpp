@@ -12,7 +12,7 @@ void child(int fd)
     const char *s = "hello";
     write(fd, s, strlen(s));
     // pause();
-    close(fd);
+    // close(fd);
 }
 
 void parent(int fd)
@@ -26,6 +26,7 @@ void parent(int fd)
     long timeout = 1000;
 
     while (true) {
+        bool should_return = false;
         bool result = p.poll(timeout);
         printf("poll result is %d\n", result);
         if (p.has_input(fd)) {
@@ -36,12 +37,16 @@ void parent(int fd)
                 printf("'%s'\n", buf);
             } else if (0 == n) {
                 puts("EOF");
-                return;
+                should_return = true;
             }
         }
         if (p.has_error(fd)) {
             printf("error on fd %d\n", fd);
+            should_return = true;
         }
+
+        if (should_return)
+            return;
     }
 }
 
